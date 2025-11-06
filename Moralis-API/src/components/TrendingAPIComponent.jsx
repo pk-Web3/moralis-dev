@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import './TrendingAPIComponent.css'
 
 function TrendingAPIComponent() {
   const [data, setData] = useState(null)
@@ -15,13 +16,13 @@ function TrendingAPIComponent() {
     }
 
     try {
-      const response = await fetch('https://deep-index.moralis.io/api/v2.2/market-data/nfts/top-collections', options)
+      const response = await fetch('https://deep-index.moralis.io/api/v2.2/market-data/nfts/hottest-collections', options)
       if (!response.ok) {
         throw new Error('Network response was not ok')
       }
       const result = await response.json()
       setData(result)
-      console.log(result);      
+      console.log(result);
       setLoading(false)
     } catch (error) {
       setError(error.message)
@@ -38,9 +39,41 @@ function TrendingAPIComponent() {
 
   return (
     <div className="api-container">
-      <h2>Top NFT Collections</h2>
+      <h2>Trending NFT Collections</h2>
       {data && (
-        <pre>{JSON.stringify(data, null, 2)}</pre>
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Collection</th>
+                <th>Floor Price (24H)</th>
+                <th>Volume (24H)</th>
+                <th>Volume (7D)</th>
+                <th>24H Volume (USD)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item, index) => (
+                <tr key={index}>
+                  <td>
+                    <div className="collection-info">
+                      <img
+                        src={item.collection_image}
+                        alt={item.collection_title}
+                        className="collection-image"
+                      />
+                      <span>{item.collection_title}</span>
+                    </div>
+                  </td>
+                  <td>{item.floor_price || 'N/A'}</td>
+                  <td>{item.floor_price_24hr_percent_change ? `${item.floor_price_24hr_percent_change}%` : 'N/A'}</td>
+                  <td>{item.floor_price_usd_24hr_percent_change ? `${item.floor_price_usd_24hr_percent_change}%` : 'N/A'}</td>
+                  <td>${item.volume_usd ? Number(item.volume_usd).toLocaleString() : 'N/A'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   )
