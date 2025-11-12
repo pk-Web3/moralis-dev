@@ -6,6 +6,7 @@ function App() {
 
   return (
     <>
+      <h2>Moralis API</h2>
       <TrendingAPIComponent />
     </>
   )
